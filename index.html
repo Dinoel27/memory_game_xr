@@ -33,6 +33,21 @@
         </mr-panel>
     </mr-app>
     <script src="script.js" type="module"></script>
+    <script>
+        function onCardClick(event) {
+            const cardId = event.target.dataset.id;
+            const card = App.cards[cardId];
+            App.revealCard(card);
+            setTimeout(() => App.hideCard(card), 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const cardElements = document.querySelectorAll('#cards-container mr-model');
+            cardElements.forEach(card => {
+                card.addEventListener('click', onCardClick);
+            });
+        });
+    </script>
 </body>
 
 </html>
