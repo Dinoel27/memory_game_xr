@@ -11,39 +11,31 @@
 <body>
     <mr-app debug="true" class="app">
         <mr-entity data-comp-anchor="type:plane; label: table;" class="stack" id="game-container" data-position="0 0 1">
-            <mr-div class="illustration">
-                <mr-div id="cards-container"></mr-div>
+            <mr-div class="illustration" id="cards-container">
+                <!-- Cards will be imported here -->
+                <mr-model src="./models/model1.glb" id="card-0" onclick="App.onCardClick(0)"></mr-model>
+                <mr-model src="./models/model2.glb" id="card-1" onclick="App.onCardClick(1)"></mr-model>
+                <mr-model src="./models/model3.glb" id="card-2" onclick="App.onCardClick(2)"></mr-model>
+                <mr-model src="./models/model4.glb" id="card-3" onclick="App.onCardClick(3)"></mr-model>
+                <mr-model src="./models/model5.glb" id="card-4" onclick="App.onCardClick(4)"></mr-model>
+                <mr-model src="./models/model1.glb" id="card-5" onclick="App.onCardClick(5)"></mr-model>
+                <mr-model src="./models/model2.glb" id="card-6" onclick="App.onCardClick(6)"></mr-model>
+                <mr-model src="./models/model3.glb" id="card-7" onclick="App.onCardClick(7)"></mr-model>
+                <mr-model src="./models/model4.glb" id="card-8" onclick="App.onCardClick(8)"></mr-model>
+                <mr-model src="./models/model5.glb" id="card-9" onclick="App.onCardClick(9)"></mr-model>
             </mr-div>
-        </mr-entity>
-
-        <mr-entity data-comp-anchor="type: plane; label: table;">
-            <mr-model class="spbutton" data-position="0.30 1 -0.65" onclick="App.prev()"
-                 src="./buttonprev.glb"></mr-model>
-            <mr-model class="spbutton" data-position="-0.30 1 -0.65" onclick="App.next()"
-                 src="./buttonnext.glb"></mr-model>
         </mr-entity>
 
         <mr-panel id="ui" class="stack">
             <div id="score">Score: 0</div>
             <div id="timer">Time: 180s</div>
-            <button id="start">Start Over</button>
-            <button id="pause">Pause</button>
-            <button id="exit">Exit Game</button>
-            <button id="mute">Disable Sounds</button>
+            <button id="start" onclick="App.startGame()">Start Over</button>
+            <button id="pause" onclick="App.pauseGame()">Pause</button>
+            <button id="exit" onclick="App.exitGame()">Exit Game</button>
+            <button id="mute" onclick="App.toggleSound()">Disable Sounds</button>
         </mr-panel>
     </mr-app>
     <script src="script.js" type="module"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const cardElements = document.querySelectorAll('#cards-container mr-model');
-            cardElements.forEach(card => {
-                card.addEventListener('click', function() {
-                    const cardId = card.getAttribute('data-id');
-                    App.revealCard(cardId);
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>
