@@ -25,6 +25,12 @@ const muteButton = document.getElementById('mute');
 // Initialize cards and add them to the scene
 function initCards() {
     const cards = cardIds.map(id => document.getElementById(id));
+    cards.forEach((card, index) => {
+        if (!card) {
+            console.error(`Card with ID ${cardIds[index]} not found.`);
+        }
+        card.userData = { id: Math.floor(index / 2), revealed: false }; // Assign userData
+    });
     shuffleArray(cards); // Shuffle the array to randomize placement
     positionCardsInGrid(cards); // Position cards in a grid
 }
@@ -41,22 +47,24 @@ function shuffleArray(array) {
 function positionCardsInGrid(cards) {
     const rows = 2;
     const cols = totalPairs; // 5 pairs, 10 cards in total
-    const spacing = 0.5; // Reduced spacing between cards
+    const spacing = 1.2; // Reduced spacing between cards
 
-    for (let i = 0; i < cards.length; i++) {
-        const row = Math.floor(i / cols);
-        const col = i % cols;
+    cards.forEach((card, index) => {
+        if (!card) return; // Skip if card is null
+        const row = Math.floor(index / cols);
+        const col = index % cols;
         const position = {
             x: (col - (cols / 2)) * spacing,
             y: (row - (rows / 2)) * spacing,
             z: 0
         };
-        cards[i].setAttribute('data-position', `${position.x} ${position.y} ${position.z}`);
-    }
+        card.setAttribute('data-position', `${position.x} ${position.y} ${position.z}`);
+    });
 }
 
 // Reveal a card
 function revealCard(card) {
+    console.log(`Revealing card: ${card.id}`);
     if (revealedCards.length < 2 && !card.userData.revealed) {
         card.object3D.rotation.y = Math.PI / 2;
         card.userData.revealed = true;
@@ -165,8 +173,13 @@ function toggleSound() {
 
 // Card click handler
 function onCardClick(cardId) {
+    console.log(`Card clicked: ${cardId}`);
     const card = document.getElementById(cardId);
-    revealCard(card);
+    if (card) {
+        revealCard(card);
+    } else {
+        console.error(`Card with ID ${cardId} not found.`);
+    }
 }
 
 const App = {
