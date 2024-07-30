@@ -17,10 +17,10 @@
         </mr-entity>
 
         <mr-entity data-comp-anchor="type: plane; label: table;">
-            <!-- <mr-model class="spbutton" data-position="0.30 1 -0.65" onclick="App.prev()"
+            <mr-model class="spbutton" data-position="0.30 1 -0.65" onclick="App.prev()"
                  src="./buttonprev.glb"></mr-model>
             <mr-model class="spbutton" data-position="-0.30 1 -0.65" onclick="App.next()"
-                 src="./buttonnext.glb"></mr-model> -->
+                 src="./buttonnext.glb"></mr-model>
         </mr-entity>
 
         <mr-panel id="ui" class="stack">
@@ -33,20 +33,6 @@
         </mr-panel>
     </mr-app>
     <script src="script.js" type="module"></script>
-    <script>
-        function onCardClick(event) {
-            const cardId = event.target.dataset.id;
-            const card = App.cards[cardId];
-            App.revealCard(card);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const cardElements = document.querySelectorAll('#cards-container mr-model');
-            cardElements.forEach(card => {
-                card.addEventListener('click', onCardClick);
-            });
-        });
-    </script>
 </body>
 
 </html>
