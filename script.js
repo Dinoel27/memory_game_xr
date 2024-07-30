@@ -41,7 +41,7 @@ function shuffleArray(array) {
 function positionCardsInGrid(cards) {
     const rows = 2;
     const cols = totalPairs; // 5 pairs, 10 cards in total
-    const spacing = 1.2; // Reduced spacing between cards
+    const spacing = 0.5; // Reduced spacing between cards
 
     for (let i = 0; i < cards.length; i++) {
         const row = Math.floor(i / cols);
