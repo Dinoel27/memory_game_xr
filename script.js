@@ -26,7 +26,7 @@ const muteButton = document.getElementById('mute');
 function initCards() {
     const selectedModels = models.concat(models); // Duplicate the array
     shuffleArray(selectedModels); // Shuffle the array to randomize placement
-    
+
     const cardsContainer = document.getElementById('cards-container');
     cardsContainer.innerHTML = ''; // Clear previous cards if any
 
@@ -39,7 +39,7 @@ function initCards() {
         cards.push(card);
         cardsContainer.appendChild(card);
     }
-    positionCardsRandomly();
+    positionCardsInGrid();
 }
 
 // Shuffle the array using Fisher-Yates algorithm
@@ -50,21 +50,22 @@ function shuffleArray(array) {
     }
 }
 
-// Position cards randomly on the tabletop
-function positionCardsRandomly() {
-    const positions = [];
-    cards.forEach(card => {
-        let position;
-        do {
-            position = {
-                x: (Math.random() - 0.5) * 10,
-                y: (Math.random() - 0.5) * 10,
-                z: 0
-            };
-        } while (positions.some(pos => distance(pos, position) < 1.5));
-        positions.push(position);
-        card.setAttribute('data-position', `${position.x} ${position.y} ${position.z}`);
-    });
+// Position cards in a grid on the tabletop
+function positionCardsInGrid() {
+    const rows = 2;
+    const cols = totalPairs; // 5 pairs, 10 cards in total
+    const spacing = 1.5; // Spacing between cards
+
+    for (let i = 0; i < cards.length; i++) {
+        const row = Math.floor(i / cols);
+        const col = i % cols;
+        const position = {
+            x: (col - (cols / 2)) * spacing,
+            y: (row - (rows / 2)) * spacing,
+            z: 0
+        };
+        cards[i].setAttribute('data-position', `${position.x} ${position.y} ${position.z}`);
+    }
 }
 
 // Calculate distance between two points
@@ -89,6 +90,12 @@ function revealCard(card) {
     }
 }
 
+// Hide a card
+function hideCard(card) {
+    card.object3D.rotation.y = 0;
+    card.userData.revealed = false;
+}
+
 // Check for a match
 function checkMatch() {
     if (revealedCards.length === 2) {
@@ -101,10 +108,7 @@ function checkMatch() {
                 winGame();
             }
         } else {
-            revealedCards.forEach(card => {
-                card.object3D.rotation.y = 0;
-                card.userData.revealed = false;
-            });
+            revealedCards.forEach(card => hideCard(card));
             playSound('mismatch');
         }
         revealedCards = [];
