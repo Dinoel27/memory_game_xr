@@ -24,7 +24,7 @@ const muteButton = document.getElementById('mute');
 
 // Initialize cards and add them to the scene
 function initCards() {
-    const selectedModels = models.concat(models); // Duplicate the array
+    const selectedModels = models.concat(models); // Duplicate the array to create pairs
     shuffleArray(selectedModels); // Shuffle the array to randomize placement
 
     const cardsContainer = document.getElementById('cards-container');
@@ -34,8 +34,8 @@ function initCards() {
         const card = document.createElement('mr-model');
         card.setAttribute('src', `./models/${selectedModels[i]}`);
         card.setAttribute('data-id', i.toString());
-        card.addEventListener('click', onCardClick);
         card.userData = { id: Math.floor(i / 2), revealed: false };
+        card.addEventListener('click', onCardClick);
         cards.push(card);
         cardsContainer.appendChild(card);
     }
@@ -68,17 +68,9 @@ function positionCardsInGrid() {
     }
 }
 
-// Calculate distance between two points
-function distance(pos1, pos2) {
-    return Math.sqrt(
-        (pos1.x - pos2.x) ** 2 +
-        (pos1.y - pos2.y) ** 2 +
-        (pos1.z - pos2.z) ** 2
-    );
-}
-
 // Reveal a card
-function revealCard(card) {
+function revealCard(cardId) {
+    const card = cards[cardId];
     if (revealedCards.length < 2 && !card.userData.revealed) {
         card.object3D.rotation.y = Math.PI / 2;
         card.userData.revealed = true;
@@ -178,8 +170,7 @@ muteButton.addEventListener('click', () => { soundsEnabled = !soundsEnabled; });
 // Card click handler
 function onCardClick(event) {
     const cardId = event.target.dataset.id;
-    const card = cards[cardId];
-    revealCard(card);
+    revealCard(cardId);
 }
 
 // Start the game initially
