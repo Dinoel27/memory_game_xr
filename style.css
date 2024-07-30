@@ -1,0 +1,13 @@
+#ui {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000;
+}
+#ui div, #ui button {
+  margin: 5px 0;
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Memory Game</title>
+    <script src="https://cdn.jsdelivr.net/npm/mrjs@latest/dist/mr.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+    <mr-app debug="true" class="app">
+        <mr-entity data-comp-anchor="type:plane; label: table;" class="stack" id="game-container" data-position="0 0 1">
+            <mr-div class="illustration">
+                <mr-div id="cards-container"></mr-div>
+            </mr-div>
+        </mr-entity>
+
+        <mr-entity data-comp-anchor="type: plane; label: table;">
+            <!-- <mr-model class="spbutton" data-position="0.30 1 -0.65" onclick="App.prev()"
+                 src="./buttonprev.glb"></mr-model>
+            <mr-model class="spbutton" data-position="-0.30 1 -0.65" onclick="App.next()"
+                 src="./buttonnext.glb"></mr-model> -->
+        </mr-entity>
+
+        <mr-panel id="ui" class="stack">
+            <div id="score">Score: 0</div>
+            <div id="timer">Time: 180s</div>
+            <button id="start">Start Over</button>
+            <button id="pause">Pause</button>
+            <button id="exit">Exit Game</button>
+            <button id="mute">Disable Sounds</button>
+        </mr-panel>
+    </mr-app>
+    <script src="script.js" type="module"></script>
+    <script>
+        function onCardClick(event) {
+            const cardId = event.target.dataset.id;
+            const card = App.cards[cardId];
+            App.revealCard(card);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const cardElements = document.querySelectorAll('#cards-container mr-model');
+            cardElements.forEach(card => {
+                card.addEventListener('click', onCardClick);
+            });
+        });
+    </script>
+</body>
+
+</html>
