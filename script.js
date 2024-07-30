@@ -27,6 +27,9 @@ function initCards() {
     const selectedModels = models.concat(models); // Duplicate the array
     shuffleArray(selectedModels); // Shuffle the array to randomize placement
     
+    const cardsContainer = document.getElementById('cards-container');
+    cardsContainer.innerHTML = ''; // Clear previous cards if any
+
     for (let i = 0; i < selectedModels.length; i++) {
         const card = document.createElement('mr-model');
         card.setAttribute('src', `./models/${selectedModels[i]}`);
@@ -34,7 +37,7 @@ function initCards() {
         card.addEventListener('click', onCardClick);
         card.userData = { id: Math.floor(i / 2), revealed: false };
         cards.push(card);
-        document.getElementById('cards-container').appendChild(card);
+        cardsContainer.appendChild(card);
     }
     positionCardsRandomly();
 }
@@ -168,11 +171,12 @@ pauseButton.addEventListener('click', () => { isPaused = !isPaused; });
 exitButton.addEventListener('click', () => { /* exit game logic */ });
 muteButton.addEventListener('click', () => { soundsEnabled = !soundsEnabled; });
 
-// Start the game initially
-startGame();
-
+// Card click handler
 function onCardClick(event) {
     const cardId = event.target.dataset.id;
     const card = cards[cardId];
     revealCard(card);
 }
+
+// Start the game initially
+document.addEventListener('DOMContentLoaded', startGame);
