@@ -9,9 +9,9 @@ let soundsEnabled = true;
 let isPaused = false;
 
 // Card setup
-const cards = [];
-const models = [
-    'model1.glb', 'model2.glb', 'model3.glb', 'model4.glb', 'model5.glb'
+const cardIds = [
+    'card-0', 'card-1', 'card-2', 'card-3', 'card-4',
+    'card-5', 'card-6', 'card-7', 'card-8', 'card-9'
 ];
 
 // UI elements
@@ -24,22 +24,9 @@ const muteButton = document.getElementById('mute');
 
 // Initialize cards and add them to the scene
 function initCards() {
-    const selectedModels = models.concat(models); // Duplicate the array to create pairs
-    shuffleArray(selectedModels); // Shuffle the array to randomize placement
-
-    const cardsContainer = document.getElementById('cards-container');
-    cardsContainer.innerHTML = ''; // Clear previous cards if any
-
-    for (let i = 0; i < selectedModels.length; i++) {
-        const card = document.createElement('mr-model');
-        card.setAttribute('src', `./models/${selectedModels[i]}`);
-        card.setAttribute('data-id', i.toString());
-        card.userData = { id: Math.floor(i / 2), revealed: false };
-        card.addEventListener('click', onCardClick);
-        cards.push(card);
-        cardsContainer.appendChild(card);
-    }
-    positionCardsInGrid();
+    const cards = cardIds.map(id => document.getElementById(id));
+    shuffleArray(cards); // Shuffle the array to randomize placement
+    positionCardsInGrid(cards); // Position cards in a grid
 }
 
 // Shuffle the array using Fisher-Yates algorithm
@@ -51,10 +38,10 @@ function shuffleArray(array) {
 }
 
 // Position cards in a grid on the tabletop
-function positionCardsInGrid() {
+function positionCardsInGrid(cards) {
     const rows = 2;
     const cols = totalPairs; // 5 pairs, 10 cards in total
-    const spacing = 1.5; // Spacing between cards
+    const spacing = 1.2; // Reduced spacing between cards
 
     for (let i = 0; i < cards.length; i++) {
         const row = Math.floor(i / cols);
@@ -69,8 +56,7 @@ function positionCardsInGrid() {
 }
 
 // Reveal a card
-function revealCard(cardId) {
-    const card = cards[cardId];
+function revealCard(card) {
     if (revealedCards.length < 2 && !card.userData.revealed) {
         card.object3D.rotation.y = Math.PI / 2;
         card.userData.revealed = true;
@@ -161,17 +147,37 @@ function playSound(type) {
     }
 }
 
-// UI event listeners
-startButton.addEventListener('click', startGame);
-pauseButton.addEventListener('click', () => { isPaused = !isPaused; });
-exitButton.addEventListener('click', () => { /* exit game logic */ });
-muteButton.addEventListener('click', () => { soundsEnabled = !soundsEnabled; });
+// Pause game
+function pauseGame() {
+    isPaused = !isPaused;
+}
+
+// Exit game
+function exitGame() {
+    clearInterval(interval);
+    // Additional logic to exit the game
+}
+
+// Toggle sound
+function toggleSound() {
+    soundsEnabled = !soundsEnabled;
+}
 
 // Card click handler
-function onCardClick(event) {
-    const cardId = event.target.dataset.id;
-    revealCard(cardId);
+function onCardClick(cardId) {
+    const card = document.getElementById(cardId);
+    revealCard(card);
 }
+
+const App = {
+    startGame,
+    pauseGame,
+    exitGame,
+    toggleSound,
+    onCardClick
+};
 
 // Start the game initially
 document.addEventListener('DOMContentLoaded', startGame);
+
+export { App };
