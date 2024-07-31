@@ -83,7 +83,7 @@
                     model.setAttribute('data-position', position);
 
                     // Create a smaller collider
-                    const colliderGeometry = new THREE.BoxGeometry(0.8, 0.8, 0.8); // Adjust size as needed
+                    const colliderGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.1); // Adjust size as needed
                     const colliderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, visible: false });
                     const colliderMesh = new THREE.Mesh(colliderGeometry, colliderMaterial);
                     model.object3D.add(colliderMesh);
