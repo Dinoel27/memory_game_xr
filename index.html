@@ -17,39 +17,61 @@
                 <mr-button class="play-button">Play</mr-button>
             </mr-panel>
 
-            <mr-entity class="card-container" id="card-container-0">
-                <mr-model src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-0"></mr-model>
+            <mr-entity class="card-container" id="card-container-0" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-0" src="./models/model1.glb" name="model1"></mr-food>
             </mr-entity>
-            <mr-entity class="card-container" id="card-container-1">
-                <mr-model src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-1"></mr-model>
+            <mr-entity class="card-container" id="card-container-1" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-1" src="./models/model2.glb" name="model2"></mr-food>
             </mr-entity>
-            <mr-entity class="card-container" id="card-container-2">
-                <mr-model src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-2"></mr-model>
+            <mr-entity class="card-container" id="card-container-2" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-2" src="./models/model3.glb" name="model3"></mr-food>
             </mr-entity>
-            <mr-entity class="card-container" id="card-container-3">
-                <mr-model src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-3"></mr-model>
+            <mr-entity class="card-container" id="card-container-3" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-3" src="./models/model4.glb" name="model4"></mr-food>
             </mr-entity>
-            <mr-entity class="card-container" id="card-container-4">
-                <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-4"></mr-model>
+            <mr-entity class="card-container" id="card-container-4" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-4" src="./models/model5.glb" name="model5"></mr-food>
             </mr-entity>
-            <mr-entity class="card-container" id="card-container-5">
-                <mr-model src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-5"></mr-model>
+            <mr-entity class="card-container" id="card-container-5" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-5" src="./models/model1.glb" name="model1"></mr-food>
             </mr-entity>
-            <mr-entity class="card-container" id="card-container-6">
-                <mr-model src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-6"></mr-model>
+            <mr-entity class="card-container" id="card-container-6" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-6" src="./models/model2.glb" name="model2"></mr-food>
             </mr-entity>
-            <mr-entity class="card-container" id="card-container-7">
-                <mr-model src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-7"></mr-model>
+            <mr-entity class="card-container" id="card-container-7" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-7" src="./models/model3.glb" name="model3"></mr-food>
             </mr-entity>
-            <mr-entity class="card-container" id="card-container-8">
-                <mr-model src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-8"></mr-model>
+            <mr-entity class="card-container" id="card-container-8" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-8" src="./models/model4.glb" name="model4"></mr-food>
             </mr-entity>
-            <mr-entity class="card-container" id="card-container-9">
-                <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-9"></mr-model>
+            <mr-entity class="card-container" id="card-container-9" data-comp-anchor="type:plane; label:anchor;">
+                <mr-food class="card" id="card-9" src="./models/model5.glb" name="model5"></mr-food>
             </mr-entity>
         </mr-entity>
     </mr-app>
+
     <script>
+        class MRFood extends MREntity {
+            constructor() {
+                super();
+
+                const geometry = new THREE.BoxGeometry(0.99, 0.99, 0.99);
+                const material = new THREE.MeshPhongMaterial({
+                    color: '#0235ff',
+                    side: 2,
+                    transparent: true,
+                    opacity: 0,
+                    specular: '#7989c4',
+                    clipping: true
+                });
+
+                this.mesh = new THREE.Mesh(geometry, material);
+                this.object3D.add(this.mesh);
+            }
+        }
+
+        customElements.define('mr-food', MRFood);
+
         document.addEventListener('DOMContentLoaded', (event) => {
             const cardContainers = document.querySelectorAll('.card-container');
             let flippedCards = [];
@@ -114,7 +136,7 @@
                 card.setAttribute('data-rotation', '90 0 0');
             }
 
-            document.querySelectorAll('mr-model').forEach(model => {
+            document.querySelectorAll('mr-food').forEach(model => {
                 model.addEventListener('click', handleModelClick);
             });
 
