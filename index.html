@@ -1,60 +1,36 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>Memory Game</title>
     <script src="https://cdn.jsdelivr.net/gh/volumetrics-io/mrjs/dist/mr.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
-
 <body>
     <mr-app debug="true">
         <mr-entity data-comp-anchor="type:fixed; label:table;" id="game-container" data-position="0 2 0.5">
             <mr-light color="#000000" intensity="10" data-position="0 1 0"></mr-light>
-
             <mr-panel class="bottom-panel">
                 <mr-button class="play-button">Play</mr-button>
             </mr-panel>
 
-            <mr-entity class="card-container" id="card-container-0" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-0" src="./models/model1.glb" name="model1"></mr-food>
-            </mr-entity>
-            <mr-entity class="card-container" id="card-container-1" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-1" src="./models/model2.glb" name="model2"></mr-food>
-            </mr-entity>
-            <mr-entity class="card-container" id="card-container-2" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-2" src="./models/model3.glb" name="model3"></mr-food>
-            </mr-entity>
-            <mr-entity class="card-container" id="card-container-3" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-3" src="./models/model4.glb" name="model4"></mr-food>
-            </mr-entity>
-            <mr-entity class="card-container" id="card-container-4" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-4" src="./models/model5.glb" name="model5"></mr-food>
-            </mr-entity>
-            <mr-entity class="card-container" id="card-container-5" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-5" src="./models/model1.glb" name="model1"></mr-food>
-            </mr-entity>
-            <mr-entity class="card-container" id="card-container-6" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-6" src="./models/model2.glb" name="model2"></mr-food>
-            </mr-entity>
-            <mr-entity class="card-container" id="card-container-7" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-7" src="./models/model3.glb" name="model3"></mr-food>
-            </mr-entity>
-            <mr-entity class="card-container" id="card-container-8" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-8" src="./models/model4.glb" name="model4"></mr-food>
-            </mr-entity>
-            <mr-entity class="card-container" id="card-container-9" data-comp-anchor="type:plane; label:anchor;">
-                <mr-food class="card" id="card-9" src="./models/model5.glb" name="model5"></mr-food>
-            </mr-entity>
+            <!-- All card models are direct children of the game-container -->
+            <mr-painting src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-0"></mr-painting>
+            <mr-painting src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-1"></mr-painting>
+            <mr-painting src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-2"></mr-painting>
+            <mr-painting src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-3"></mr-painting>
+            <mr-painting src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-4"></mr-painting>
+            <mr-painting src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-5"></mr-painting>
+            <mr-painting src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-6"></mr-painting>
+            <mr-painting src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-7"></mr-painting>
+            <mr-painting src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-8"></mr-painting>
+            <mr-painting src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-9"></mr-painting>
         </mr-entity>
     </mr-app>
-
     <script>
-        class MRFood extends MREntity {
+        class MRPainting extends MREntity {
             constructor() {
                 super();
-
                 const geometry = new THREE.BoxGeometry(0.99, 0.99, 0.99);
                 const material = new THREE.MeshPhongMaterial({
                     color: '#0235ff',
@@ -64,85 +40,53 @@
                     specular: '#7989c4',
                     clipping: true
                 });
-
                 this.mesh = new THREE.Mesh(geometry, material);
                 this.object3D.add(this.mesh);
             }
         }
 
-        customElements.define('mr-food', MRFood);
+        customElements.define('mr-painting', MRPainting);
 
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const cardContainers = document.querySelectorAll('.card-container');
+        document.addEventListener('DOMContentLoaded', () => {
+            const models = document.querySelectorAll('mr-painting');
             let flippedCards = [];
-
-            // Ensure there are exactly 10 card containers
-            if (cardContainers.length !== 10) {
-                location.reload();
-                return;
-            }
 
             function shuffleArray(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]]; // ES6 destructuring swap
+                    [array[i], array[j]] = [array[j], array[i]];
                 }
             }
 
             function placeModelsInGrid() {
-                shuffleArray(cardContainers); // Shuffle the order of card containers
-                const rows = 2;
-                const cols = 5;
-                const gap = 0.2; // Gap between cards
-
-                cardContainers.forEach((container, index) => {
-                    const row = Math.floor(index / cols);
-                    const col = index % cols;
-                    const x = col * gap - (cols / 2) * gap + gap / 2;
-                    const y = 0;
-                    const z = row * gap - (rows / 2) * gap + gap / 2;
-                    container.setAttribute('data-position', `${x} ${y} ${z}`);
+                shuffleArray(models);
+                const positions = ['-0.5 0 0', '-0.3 0 0', '-0.1 0 0', '0.1 0 0', '0.3 0 0', '-0.5 0.2 0', '-0.3 0.2 0', '-0.1 0.2 0', '0.1 0.2 0', '0.3 0.2 0'];
+                models.forEach((model, index) => {
+                    const position = positions[index];
+                    model.setAttribute('data-position', position);
                 });
             }
 
             function handleModelClick(event) {
-                const model = event.target.closest('mr-model');
+                const model = event.target.closest('mr-painting');
                 const currentRotation = model.getAttribute('data-rotation') || '0 0 0';
                 const [x, y, z] = currentRotation.split(' ').map(Number);
                 const newRotation = `${x + 180} ${y} ${z}`;
                 model.setAttribute('data-rotation', newRotation);
-
                 flippedCards.push(model);
-
-                if (flippedCards.length === 2) {
-                    checkForMatch();
-                }
+                if (flippedCards.length === 2) checkForMatch();
             }
 
             function checkForMatch() {
                 const [firstCard, secondCard] = flippedCards;
-                if (firstCard.getAttribute('name') === secondCard.getAttribute('name')) {
-                    // Cards match, keep them flipped
-                    flippedCards = [];
-                } else {
-                    // Cards do not match, reset them immediately
-                    resetCard(firstCard);
-                    resetCard(secondCard);
-                    flippedCards = [];
-                }
+                if (firstCard.getAttribute('name') === secondCard.getAttribute('name')) flippedCards = [];
+                else flippedCards.forEach(card => card.setAttribute('data-rotation', '90 0 0'));
+                flippedCards = [];
             }
 
-            function resetCard(card) {
-                card.setAttribute('data-rotation', '90 0 0');
-            }
-
-            document.querySelectorAll('mr-food').forEach(model => {
-                model.addEventListener('click', handleModelClick);
-            });
-
+            models.forEach(model => model.addEventListener('click', handleModelClick));
             placeModelsInGrid();
         });
     </script>
 </body>
-
 </html>
