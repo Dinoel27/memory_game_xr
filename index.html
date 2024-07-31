@@ -84,11 +84,11 @@
             }
 
             function placeModelsInGrid() {
-                shuffleArray(models);
                 const positions = [
                     '-0.5 0 0', '-0.3 0 0', '-0.1 0 0', '0.1 0 0', '0.3 0 0',
                     '-0.5 0.2 0', '-0.3 0.2 0', '-0.1 0.2 0', '0.1 0.2 0', '0.3 0.2 0'
                 ];
+                shuffleArray(positions); // Shuffle positions array to randomize positions
                 models.forEach((model, index) => {
                     const position = positions[index];
                     model.setAttribute('data-position', position);
