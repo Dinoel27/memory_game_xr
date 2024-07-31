@@ -15,16 +15,16 @@
             </mr-panel>
 
             <!-- All card models are direct children of the game-container -->
-            <mr-painting src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-0"></mr-painting>
-            <mr-painting src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-1"></mr-painting>
-            <mr-painting src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-2"></mr-painting>
-            <mr-painting src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-3"></mr-painting>
-            <mr-painting src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-4"></mr-painting>
-            <mr-painting src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-5"></mr-painting>
-            <mr-painting src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-6"></mr-painting>
-            <mr-painting src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-7"></mr-painting>
-            <mr-painting src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-8"></mr-painting>
-            <mr-painting src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-9"></mr-painting>
+            <mr-model src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-0"></mr-model>
+            <mr-model src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-1"></mr-model>
+            <mr-model src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-2"></mr-model>
+            <mr-model src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-3"></mr-model>
+            <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-4"></mr-model>
+            <mr-model src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-5"></mr-model>
+            <mr-model src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-6"></mr-model>
+            <mr-model src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-7"></mr-model>
+            <mr-model src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-8"></mr-model>
+            <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-9"></mr-model>
         </mr-entity>
     </mr-app>
     <script>
@@ -47,6 +47,36 @@
 
         customElements.define('mr-painting', MRPainting);
 
+        let volume = document.getElementById('volume');
+        let panel = document.getElementById('panel');
+        volume.object3D.visible = false;
+        let worldPosition = new THREE.Vector3();
+
+         function toggleMR() {
+        if (!mrjsUtils.xr.isPresenting) {
+            return
+        }
+        volume.object3D.visible = !volume.object3D.visible;
+    }
+
+        let painting = document.getElementById('painting');
+
+         document.addEventListener('anchored', (e) => {
+
+        if (e.target == painting.parentElement && e.target.plane) {
+            let width = e.target.plane.dimensions.x - 0.01
+            let depth = e.target.plane.dimensions.z - 0.01
+            let height = width > depth ? width : depth
+            height /= 1.5
+
+            painting.mesh.geometry.copy(new THREE.BoxGeometry(width, height, depth));
+        }
+    })
+
+    document.addEventListener('exitXR', (e) => {
+        volume.object3D.visible = false
+    });
+
         document.addEventListener('DOMContentLoaded', () => {
             const models = document.querySelectorAll('mr-painting');
             let flippedCards = [];
@@ -57,6 +87,9 @@
                     [array[i], array[j]] = [array[j], array[i]];
                 }
             }
+
+        
+            
 
             function placeModelsInGrid() {
                 shuffleArray(models);
