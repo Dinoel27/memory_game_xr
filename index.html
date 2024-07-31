@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>Memory Game</title>
-<!--     <script src="https://cdn.jsdelivr.net/gh/volumetrics-io/mrjs/dist/mr.js"></script> -->
-     <script src="./dist/mr.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/gh/volumetrics-io/mrjs/dist/mr.js"></script> -->
+    <script src="./dist/mr.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
@@ -81,11 +81,19 @@
                 models.forEach((model, index) => {
                     const position = positions[index];
                     model.setAttribute('data-position', position);
+
+                    // Create a smaller collider
+                    const colliderGeometry = new THREE.BoxGeometry(0.8, 0.8, 0.8); // Adjust size as needed
+                    const colliderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, visible: false });
+                    const colliderMesh = new THREE.Mesh(colliderGeometry, colliderMaterial);
+                    model.object3D.add(colliderMesh);
+                    model.collider = colliderMesh; // Assign the collider to the model for future reference
                 });
             }
 
             function handleModelClick(event) {
                 const model = event.target.closest('mr-model');
+                if (!model || !model.collider) return;
                 const currentRotation = model.getAttribute('data-rotation') || '0 0 0';
                 const [x, y, z] = currentRotation.split(' ').map(Number);
                 const newRotation = `${x + 180} ${y} ${z}`;
@@ -139,5 +147,4 @@
         });
     </script>
 </body>
-
 </html>
