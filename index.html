@@ -9,34 +9,107 @@
 </head>
 
 <body>
-    <mr-app debug="true" class="app">
-        <mr-entity data-comp-anchor="type:plane; label: table;" id="game-container" data-position="0 0 0">
-            <!-- <mr-div id="cards-container"> -->
-                <mr-div>
-                <!-- Cards will be imported here -->
-                <mr-model src="./models/model1.glb" data-comp-anchor="type:plane; label: table;" id="card-0" onclick="App.onCardClick('card-0')"></mr-model>
-                <mr-model src="./models/model2.glb" data-comp-anchor="type:plane; label: table;" id="card-1" onclick="App.onCardClick('card-1')"></mr-model>
-                <mr-model src="./models/model3.glb" data-comp-anchor="type:plane; label: table;" id="card-2" onclick="App.onCardClick('card-2')"></mr-model>
-                <mr-model src="./models/model4.glb" data-comp-anchor="type:plane; label: table;" id="card-3" onclick="App.onCardClick('card-3')"></mr-model>
-                <mr-model src="./models/model5.glb" data-comp-anchor="type:plane; label: table;" id="card-4" onclick="App.onCardClick('card-4')"></mr-model>
-                <mr-model src="./models/model1.glb" data-comp-anchor="type:plane; label: table;" id="card-5" onclick="App.onCardClick('card-5')"></mr-model>
-                <mr-model src="./models/model2.glb" data-comp-anchor="type:plane; label: table;" id="card-6" onclick="App.onCardClick('card-6')"></mr-model>
-                <mr-model src="./models/model3.glb" data-comp-anchor="type:plane; label: table;" id="card-7" onclick="App.onCardClick('card-7')"></mr-model>
-                <mr-model src="./models/model4.glb" data-comp-anchor="type:plane; label: table;" id="card-8" onclick="App.onCardClick('card-8')"></mr-model>
-                <mr-model src="./models/model5.glb" data-comp-anchor="type:plane; label: table;" id="card-9" onclick="App.onCardClick('card-9')"></mr-model>
-            </mr-div>
+    <mr-app debug="true">
+        <mr-panel class="bottom-panel" data-comp-anchor="type:plane; label:fixed;" >
+        <mr-button class="play-button">Play</mr-button>
+        </mr-panel>
+        <mr-entity data-comp-anchor="type:plane; label: fixed;" id="game-container" data-position="0 0 0">
+            <mr-light color="#000000" intensity="10" data-position="0 1 0"></mr-light>
+
+            <mr-model src="./models/model1.glb" name="model1" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-0"></mr-model>
+            <mr-model src="./models/model2.glb" name="model2" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-1"></mr-model>
+            <mr-model src="./models/model3.glb" name="model3" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-2"></mr-model>
+            <mr-model src="./models/model4.glb" name="model4" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-3"></mr-model>
+            <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-4"></mr-model>
+            <mr-model src="./models/model1.glb" name="model1" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-5"></mr-model>
+            <mr-model src="./models/model2.glb" name="model2" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-6"></mr-model>
+            <mr-model src="./models/model3.glb" name="model3" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-7"></mr-model>
+            <mr-model src="./models/model4.glb" name="model4" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-8"></mr-model>
+            <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" data-position="0 0 0"
+                id="card-9"></mr-model>
         </mr-entity>
 
-        <mr-panel id="ui">
-            <div id="score">Score: 0</div>
-            <div id="timer">Time: 180s</div>
-            <button id="start" onclick="App.startGame()">Start Over</button>
-            <button id="pause" onclick="App.pauseGame()">Pause</button>
-            <button id="exit" onclick="App.exitGame()">Exit Game</button>
-            <button id="mute" onclick="App.toggleSound()">Disable Sounds</button>
-        </mr-panel>
+
     </mr-app>
-    <script src="script.js" type="module"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const models = document.querySelectorAll('mr-model');
+            let flippedCards = [];
+
+            // Ensure there are exactly 10 cards
+            if (models.length !== 10) {
+                location.reload();
+                return;
+            }
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]]; // ES6 destructuring swap
+                }
+            }
+
+            function placeModelsInGrid() {
+                shuffleArray(models); // Shuffle the order of models
+                const positions = [
+                    '-0.5 0 0', '-0.3 0 0', '-0.1 0 0', '0.1 0 0', '0.3 0 0',
+                    '-0.5 0.2 0', '-0.3 0.2 0', '-0.1 0.2 0', '0.1 0.2 0', '0.3 0.2 0'
+                ]; // Define positions
+                shuffleArray(positions); // Shuffle positions array to randomize positions
+                models.forEach((model, index) => {
+                    const position = positions[index];
+                    model.setAttribute('data-position', position);
+                });
+            }
+
+            function handleModelClick(event) {
+                const model = event.target;
+                const currentRotation = model.getAttribute('data-rotation') || '0 0 0';
+                const [x, y, z] = currentRotation.split(' ').map(Number);
+                const newRotation = `${x + 180} ${y} ${z}`;
+                model.setAttribute('data-rotation', newRotation);
+
+                flippedCards.push(model);
+
+                if (flippedCards.length === 2) {
+                    checkForMatch();
+                    console.log(' ', model);
+                }
+            }
+
+            function checkForMatch() {
+                const [firstCard, secondCard] = flippedCards;
+                if (firstCard.getAttribute('name') === secondCard.getAttribute('name')) {
+                    // Cards match, keep them flipped
+                    flippedCards = [];
+                } else {
+                    // Cards do not match, reset them immediately
+                    resetCard(firstCard);
+                    resetCard(secondCard);
+                    flippedCards = [];
+                }
+            }
+
+            function resetCard(card) {
+                card.setAttribute('data-rotation', '90 0 0');
+            }
+
+            models.forEach(model => {
+                model.addEventListener('click', handleModelClick);
+            });
+
+            placeModelsInGrid();
+        });
+    </script>
 </body>
 
 </html>
