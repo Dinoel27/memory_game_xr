@@ -29,7 +29,7 @@
             <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-9"></mr-model>
         </mr-entity>
 
-        <mr-entity data-comp-anchor="type:plane; label: anchor;" data-position="0.5 0.5 1" style="visibility: hidden;">
+        <mr-entity data-comp-anchor="type:plane; label:anchor;" data-position="0 0 0">
             <mr-volume id="volume">
                 <mr-painting id="painting"></mr-painting>
                 <mr-entity id="paintings"></mr-entity>
@@ -128,7 +128,7 @@
 
         document.addEventListener('anchored', (e) => {
             const painting = document.getElementById('painting');
-            if (e.target == painting.parentElement && e.target.plane) {
+            if (e.target === painting.parentElement && e.target.plane) {
                 let width = e.target.plane.dimensions.x - 0.01;
                 let depth = e.target.plane.dimensions.z - 0.01;
                 let height = width > depth ? width : depth;
@@ -137,7 +137,7 @@
             }
         });
 
-        document.addEventListener('exitXR', (e) => {
+        document.addEventListener('exitXR', () => {
             const volume = document.getElementById('volume');
             volume.object3D.visible = false;
         });
