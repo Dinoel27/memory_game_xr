@@ -136,10 +136,8 @@
             function handleModelClick(event) {
                 const model = event.target.closest('mr-model');
                 if (!model) return;
-                const currentRotation = model.getAttribute('data-rotation') || '0 0 0';
-                const [x, y, z] = currentRotation.split(' ').map(Number);
-                const newRotation = `${x} ${y + 180} ${z}`;
-                model.setAttribute('data-rotation', newRotation);
+                const currentRotation = model.object3D.rotation.y;
+                model.object3D.rotation.y = currentRotation + Math.PI;
 
                 flippedCards.push(model);
 
@@ -162,7 +160,7 @@
             }
 
             function resetCard(card) {
-                card.setAttribute('data-rotation', '180 0 180');
+                card.object3D.rotation.y += Math.PI;
             }
 
             models.forEach(model => {
