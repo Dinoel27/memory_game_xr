@@ -7,11 +7,12 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
-    <mr-app>
+    <mr-app debug="true">
         <mr-entity data-comp-anchor="type:fixed; label:table;" id="game-container" data-position="0 2 -0.5">
             <mr-light color="#000000" intensity="10" data-position="0 1 0"></mr-light>
             <mr-panel class="bottom-panel">
-                <mr-button class="play-button">Play</mr-button>
+                <mr-button class="play-button" onclick="startGame()">Play</mr-button>
+                <mr-text id="timer" data-position="0 0.1 0">180</mr-text>
             </mr-panel>
 
             <!-- Define 10 models (5 pairs) -->
@@ -67,9 +68,42 @@
             }
         }
 
+        function setModelsVisibility(visible) {
+            const models = document.querySelectorAll('mr-model');
+            models.forEach(model => {
+                model.object3D.visible = visible;
+            });
+        }
+
+        function startGame() {
+            setModelsVisibility(true); // Show models when game starts
+            startTimer(180); // Start 3 minute timer
+        }
+
+        function startTimer(duration) {
+            let timer = duration, minutes, seconds;
+            const display = document.getElementById('timer');
+            const intervalId = setInterval(() => {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(intervalId);
+                    display.textContent = "Time's up!";
+                }
+            }, 1000);
+        }
+
         document.addEventListener('DOMContentLoaded', (event) => {
             const models = document.querySelectorAll('mr-model');
             let flippedCards = [];
+
+            setModelsVisibility(false); // Hide models on launch
 
             if (models.length !== 10) {
                 location.reload();
