@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <title>Memory Game</title>
     <script src="./dist/mr.js"></script>
-     <script src="https://cdn.jsdelivr.net/gh/volumetrics-io/mrjs/dist/mr.js"></script>
-
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
@@ -29,12 +27,12 @@
             <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-9"></mr-model>
         </mr-entity>
 
-<!--         <mr-entity data-comp-anchor="type:plane; label:anchor;" data-position="0 1.5 -0.5">
+        <mr-entity data-comp-anchor="type:plane; label:anchor;" data-position="0 1.5 -0.5">
             <mr-volume id="volume">
                 <mr-painting id="painting"></mr-painting>
                 <mr-entity id="paintings"></mr-entity>
             </mr-volume>
-        </mr-entity> -->
+        </mr-entity>
     </mr-app>
 
     <script>
@@ -56,6 +54,18 @@
         }
 
         customElements.define('mr-painting', MRPainting);
+
+        function disableColliders(model) {
+            if (model.object3D) {
+                model.object3D.traverse((child) => {
+                    if (child.isMesh) {
+                        child.geometry.dispose();
+                        child.material.dispose();
+                        model.object3D.remove(child);
+                    }
+                });
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', (event) => {
             const models = document.querySelectorAll('mr-model');
@@ -82,14 +92,9 @@
                 models.forEach((model, index) => {
                     const position = positions[index];
                     model.setAttribute('data-position', position);
-                    // Remove or disable colliders
-                    if (model.object3D) {
-                        model.object3D.traverse((child) => {
-                            if (child.isMesh) {
-                                child.material.visible = false;
-                            }
-                        });
-                    }
+
+                    // Disable colliders
+                    disableColliders(model);
                 });
             }
 
