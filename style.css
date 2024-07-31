@@ -59,8 +59,6 @@
   background-color: rgb(255, 180, 83);
 
   letter-spacing: 20px;
-
-  z-index: 1;
 }
 
 .play-button:hover
@@ -73,6 +71,4 @@
   background-color: rgb(29, 48, 219);
 
   letter-spacing: 20px;
-
-  z-index: 1;
 }
