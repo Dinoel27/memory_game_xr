@@ -12,7 +12,7 @@
             <mr-light color="#000000" intensity="10" data-position="0 1 0"></mr-light>
             <mr-panel class="bottom-panel">
                 <mr-button class="play-button" data-position="0 0.1 0.1" onclick="startGame()">Play</mr-button>
-                <mr-button class="play-button" data-position="0 0.1 0.1" onclick="endGame()">Exit</mr-button>mr-button>
+                <mr-button class="play-button" data-position="0 0.1 0.1" onclick="endGame()">Exit</mr-button>
                 <mr-text id="timer" data-position="0 -0.1 0.1">180</mr-text>
             </mr-panel>
 
@@ -170,6 +170,59 @@
             });
 
             placeModelsInGrid();
+
+            // Add rays for hand tracking
+            const hand1 = renderer.xr.getHand(0);
+            const hand2 = renderer.xr.getHand(1);
+
+            const geometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(0, 0, -1)
+            ]);
+
+            const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
+            line.name = 'line';
+            line.scale.z = 5;
+
+            hand1.add(line.clone());
+            hand2.add(line.clone());
+
+            const hands = [hand1, hand2];
+            hands.forEach(hand => {
+                hand.addEventListener('pinchstart', onSelectStart);
+                hand.addEventListener('pinchend', onSelectEnd);
+            });
+
+            function onSelectStart(event) {
+                const hand = event.target;
+                const intersections = getIntersections(hand);
+                if (intersections.length > 0) {
+                    const intersection = intersections[0];
+                    const object = intersection.object;
+                    object.onSelect();
+                }
+            }
+
+            function onSelectEnd(event) {
+                const hand = event.target;
+                const intersections = getIntersections(hand);
+                if (intersections.length > 0) {
+                    const intersection = intersections[0];
+                    const object = intersection.object;
+                    object.onDeselect();
+                }
+            }
+
+            function getIntersections(hand) {
+                const tempMatrix = new THREE.Matrix4();
+                tempMatrix.identity().extractRotation(hand.matrixWorld);
+
+                const raycaster = new THREE.Raycaster();
+                raycaster.ray.origin.setFromMatrixPosition(hand.matrixWorld);
+                raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+
+                return raycaster.intersectObjects(models);
+            }
         });
 
         document.addEventListener('anchored', (e) => {
