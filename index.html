@@ -4,21 +4,17 @@
 <head>
     <meta charset="utf-8">
     <title>Memory Game</title>
-<!--     <script src="https://cdn.jsdelivr.net/gh/volumetrics-io/mrjs/dist/mr.js"></script> /> -->
-<!--      <script src="https://cdn.jsdelivr.net/npm/mrjs@latest/dist/mr.js"></script>  -->
-        <script src="./dist/mr.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css"
+    <script src="https://cdn.jsdelivr.net/gh/volumetrics-io/mrjs/dist/mr.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-    <mr-app>
-          <mr-panel class="bottom-panel" data-comp-anchor="type:fixed; label:table;" data-position="0 1.5 -0.5">
+    <mr-app debug="true">
+        <mr-entity data-comp-anchor="type:fixed; label:table;" id="game-container" data-position="0 2 0.5">
+            <mr-light color="#000000" intensity="10" data-position="0 1 0"></mr-light>
+            <mr-panel class="bottom-panel">
                 <mr-button class="play-button">Play</mr-button>
             </mr-panel>
-        
-        <mr-entity data-comp-anchor="type:fixed; label:table;" id="game-container" data-position="0 1.5 -0.5">
-           
-            <mr-light color="#000000" intensity="10" data-position="0 1 0"></mr-light>
 
             <!-- Define 10 models (5 pairs) -->
             <mr-model src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-0"></mr-model>
@@ -35,33 +31,38 @@
 
         <mr-entity data-comp-anchor="type:plane; label:anchor;" data-position="0 1.5 -0.5">
             <mr-volume id="volume">
-                <mr-painting id="painting"></mr-painting>
                 <mr-entity id="paintings"></mr-entity>
             </mr-volume>
         </mr-entity>
     </mr-app>
 
     <script>
-        class MRPainting extends MREntity {
+        // Ensure compatibility with mr.js library
+        class MRPainting extends HTMLElement {
             constructor() {
                 super();
                 const geometry = new THREE.BoxGeometry(0.99, 0.99, 0.99);
                 const material = new THREE.MeshPhongMaterial({
                     color: '#0235ff',
-                    side: 2,
+                    side: THREE.DoubleSide,
                     transparent: true,
-                    opacity: 0,
+                    opacity: 0.8,
                     specular: '#7989c4',
                     clipping: true
                 });
                 this.mesh = new THREE.Mesh(geometry, material);
+                this.object3D = new THREE.Object3D();
                 this.object3D.add(this.mesh);
+            }
+
+            connectedCallback() {
+                this.appendChild(this.object3D);
             }
         }
 
         customElements.define('mr-painting', MRPainting);
 
-        document.addEventListener('DOMContentLoaded', (event) => {
+        document.addEventListener('DOMContentLoaded', () => {
             const models = document.querySelectorAll('mr-model');
             let flippedCards = [];
 
