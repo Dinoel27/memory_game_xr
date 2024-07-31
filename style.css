@@ -60,7 +60,7 @@
 
   letter-spacing: 20px;
 
-  z-index: 1000;
+  z-index: 1;
 }
 
 .play-button:hover
@@ -74,5 +74,5 @@
 
   letter-spacing: 20px;
 
-  z-index: 1000;
+  z-index: 1;
 }
