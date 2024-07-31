@@ -69,19 +69,22 @@
 
             function placeModelsInGrid() {
                 shuffleArray(cardContainers); // Shuffle the order of card containers
-                const positions = [
-                    '-0.5 0 0', '-0.3 0 0', '-0.1 0 0', '0.1 0 0', '0.3 0 0',
-                    '-0.5 0.2 0', '-0.3 0.2 0', '-0.1 0.2 0', '0.1 0.2 0', '0.3 0.2 0'
-                ]; // Define positions
-                shuffleArray(positions); // Shuffle positions array to randomize positions
+                const rows = 2;
+                const cols = 5;
+                const gap = 0.2; // Gap between cards
+
                 cardContainers.forEach((container, index) => {
-                    const position = positions[index];
-                    container.setAttribute('data-position', position);
+                    const row = Math.floor(index / cols);
+                    const col = index % cols;
+                    const x = col * gap - (cols / 2) * gap + gap / 2;
+                    const y = 0;
+                    const z = row * gap - (rows / 2) * gap + gap / 2;
+                    container.setAttribute('data-position', `${x} ${y} ${z}`);
                 });
             }
 
             function handleModelClick(event) {
-                const model = event.target;
+                const model = event.target.closest('mr-model');
                 const currentRotation = model.getAttribute('data-rotation') || '0 0 0';
                 const [x, y, z] = currentRotation.split(' ').map(Number);
                 const newRotation = `${x + 180} ${y} ${z}`;
@@ -91,7 +94,6 @@
 
                 if (flippedCards.length === 2) {
                     checkForMatch();
-                    console.log(' ', model);
                 }
             }
 
