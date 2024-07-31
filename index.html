@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Memory Game</title>
     <script src="https://cdn.jsdelivr.net/gh/volumetrics-io/mrjs/dist/mr.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
+
 <body>
     <mr-app debug="true">
         <mr-entity data-comp-anchor="type:fixed; label:table;" id="game-container" data-position="0 2 0.5">
@@ -14,19 +16,14 @@
                 <mr-button class="play-button">Play</mr-button>
             </mr-panel>
 
-            <!-- All card models are direct children of the game-container -->
-            <mr-model src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-0"></mr-model>
-            <mr-model src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-1"></mr-model>
-            <mr-model src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-2"></mr-model>
-            <mr-model src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-3"></mr-model>
-            <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-4"></mr-model>
-            <mr-model src="./models/model1.glb" name="model1" data-rotation="90 0 0" id="card-5"></mr-model>
-            <mr-model src="./models/model2.glb" name="model2" data-rotation="90 0 0" id="card-6"></mr-model>
-            <mr-model src="./models/model3.glb" name="model3" data-rotation="90 0 0" id="card-7"></mr-model>
-            <mr-model src="./models/model4.glb" name="model4" data-rotation="90 0 0" id="card-8"></mr-model>
-            <mr-model src="./models/model5.glb" name="model5" data-rotation="90 0 0" id="card-9"></mr-model>
+            <!-- Models will be dynamically created and added here -->
+            <mr-entity id="models"></mr-entity>
+            <mr-entity id="volume" style="visibility: hidden;">
+                <mr-entity id="paintings"></mr-entity>
+            </mr-entity>
         </mr-entity>
     </mr-app>
+
     <script>
         class MRPainting extends MREntity {
             constructor() {
@@ -47,38 +44,53 @@
 
         customElements.define('mr-painting', MRPainting);
 
-        let volume = document.getElementById('volume');
-        let panel = document.getElementById('panel');
-        volume.object3D.visible = false;
-        let worldPosition = new THREE.Vector3();
+        const __appState = {
+            selected: 0,
+            debugToggle: false,
+            models: [
+                { name: "model1", src: "./models/model1.glb", position: "0 0 0", rotation: "90 0 0" },
+                { name: "model2", src: "./models/model2.glb", position: "0 0 0", rotation: "90 0 0" },
+                { name: "model3", src: "./models/model3.glb", position: "0 0 0", rotation: "90 0 0" },
+                { name: "model4", src: "./models/model4.glb", position: "0 0 0", rotation: "90 0 0" },
+                { name: "model5", src: "./models/model5.glb", position: "0 0 0", rotation: "90 0 0" }
+            ]
+        };
 
-         function toggleMR() {
-        if (!mrjsUtils.xr.isPresenting) {
-            return
+        const handler = {
+            set(target, property, value) {
+                target[property] = value;
+                render();
+                return true;
+            }
+        };
+
+        const App = new Proxy(__appState, handler);
+
+        function render() {
+            const modelsContainer = document.getElementById('models');
+            const paintingsContainer = document.getElementById('paintings');
+
+            modelsContainer.innerHTML = '';
+            paintingsContainer.innerHTML = '';
+
+            App.models.forEach(modelData => {
+                const model = document.createElement('mr-model');
+                model.setAttribute('src', modelData.src);
+                model.setAttribute('data-position', modelData.position);
+                model.setAttribute('data-rotation', modelData.rotation);
+                model.dataset.name = modelData.name;
+                modelsContainer.appendChild(model);
+
+                const painting = document.createElement('mr-painting');
+                painting.dataset.name = modelData.name;
+                paintingsContainer.appendChild(painting);
+            });
+
+            addEventListeners();
         }
-        volume.object3D.visible = !volume.object3D.visible;
-    }
 
-        let painting = document.getElementById('painting');
-
-         document.addEventListener('anchored', (e) => {
-
-        if (e.target == painting.parentElement && e.target.plane) {
-            let width = e.target.plane.dimensions.x - 0.01
-            let depth = e.target.plane.dimensions.z - 0.01
-            let height = width > depth ? width : depth
-            height /= 1.5
-
-            painting.mesh.geometry.copy(new THREE.BoxGeometry(width, height, depth));
-        }
-    })
-
-    document.addEventListener('exitXR', (e) => {
-        volume.object3D.visible = false
-    });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const models = document.querySelectorAll('mr-painting');
+        function addEventListeners() {
+            const models = document.querySelectorAll('mr-model');
             let flippedCards = [];
 
             function shuffleArray(array) {
@@ -88,12 +100,10 @@
                 }
             }
 
-        
-            
-
             function placeModelsInGrid() {
                 shuffleArray(models);
                 const positions = ['-0.5 0 0', '-0.3 0 0', '-0.1 0 0', '0.1 0 0', '0.3 0 0', '-0.5 0.2 0', '-0.3 0.2 0', '-0.1 0.2 0', '0.1 0.2 0', '0.3 0.2 0'];
+                shuffleArray(positions);
                 models.forEach((model, index) => {
                     const position = positions[index];
                     model.setAttribute('data-position', position);
@@ -101,7 +111,7 @@
             }
 
             function handleModelClick(event) {
-                const model = event.target.closest('mr-painting');
+                const model = event.target.closest('mr-model');
                 const currentRotation = model.getAttribute('data-rotation') || '0 0 0';
                 const [x, y, z] = currentRotation.split(' ').map(Number);
                 const newRotation = `${x + 180} ${y} ${z}`;
@@ -112,14 +122,38 @@
 
             function checkForMatch() {
                 const [firstCard, secondCard] = flippedCards;
-                if (firstCard.getAttribute('name') === secondCard.getAttribute('name')) flippedCards = [];
-                else flippedCards.forEach(card => card.setAttribute('data-rotation', '90 0 0'));
-                flippedCards = [];
+                if (firstCard.getAttribute('name') === secondCard.getAttribute('name')) {
+                    flippedCards = [];
+                } else {
+                    flippedCards.forEach(card => card.setAttribute('data-rotation', '90 0 0'));
+                    flippedCards = [];
+                }
             }
 
             models.forEach(model => model.addEventListener('click', handleModelClick));
             placeModelsInGrid();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+        });
+
+        document.addEventListener('anchored', (e) => {
+            const painting = document.getElementById('paintings');
+            if (e.target === painting.parentElement && e.target.plane) {
+                let width = e.target.plane.dimensions.x - 0.01;
+                let depth = e.target.plane.dimensions.z - 0.01;
+                let height = width > depth ? width : depth;
+                height /= 1.5;
+                painting.mesh.geometry.copy(new THREE.BoxGeometry(width, height, depth));
+            }
+        });
+
+        document.addEventListener('exitXR', () => {
+            const volume = document.getElementById('volume');
+            volume.object3D.visible = false;
         });
     </script>
 </body>
+
 </html>
