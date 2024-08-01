@@ -39,8 +39,8 @@
 
 .play-button
 {
-  height: 6vh;
-  width: 6vw;
+  height: 8vh;
+  width: 8vw;
   
   font-size: 30px;
   color: white;
@@ -52,8 +52,8 @@
 
 .play-button:hover
 {
-  height: 6vh;
-  width: 6vw;
+  height: 8vh;
+  width: 8vw;
 
   font-size: 30px;
   
@@ -64,6 +64,8 @@
 
 .timer
 {
+  height: 8vh; 
+  width: 8vw;
   font-size: 52px;
   color: rgb(0, 13, 255);
   white-space: nowrap;
