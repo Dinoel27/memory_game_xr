@@ -40,7 +40,7 @@
 .play-button
 {
   height: 10vh;
-  width: 10vw;
+  width: 12vw;
   
   font-size: 30px;
   color: white;
@@ -53,7 +53,7 @@
 .play-button:hover
 {
   height: 10vh;
-  width: 10vw;
+  width: 12vw;
 
   font-size: 30px;
   
@@ -65,8 +65,10 @@
 .timer
 {
   height: 10vh; 
-  width: 10vw;
+  width: 12vw;
   font-size: 52px;
   color: rgb(0, 13, 255);
   white-space: nowrap;
+
+  transform: translate(0%, 2vh);
 }
