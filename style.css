@@ -37,6 +37,61 @@
   z-index: 1;
 }
 
+.top-panel
+{
+max-height: 15%;
+
+background: rgb(171, 235, 255);
+/* background: #fee12b ; */
+/* background-color: linear-gradient(rgb(233, 233, 233), rgb(193, 193, 193)); */
+/* box-shadow: rgba(255, 255, 255, .2) 0 3px 15px inset, rgba(0, 0, 0, .1) 0 3px 5px, rgba(0, 0, 0, .1) 0 10px 13px; */
+cursor: pointer; 
+
+border-color: gold;
+border-style:outset;
+border-width: 20px;
+border-radius: 35px;
+padding: 20px;
+/* color: rgb(0, 0, 0); */
+
+
+
+display: flex;
+justify-content: space-around;
+align-items: center;
+
+text-decoration: none;
+font-size: 18px;
+font-weight: 600;
+outline: 0;
+padding: 10px 5px;
+position: relative;
+text-align: center;
+transition: all .3s;
+user-select: none;
+-webkit-user-select: none;
+touch-action: manipulation;
+overflow: hidden;
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+
+
+transform:translate(30vw, -20vh);
+
+z-index: 1;
+
+}
+
+/* .top-panel::after
+{
+content: '';
+position: absolute;
+height: 105%;
+width: 105%;
+border-radius: 35px;
+background-color: red;
+} */
+
 .play-button
 {
   height: 10vh;
@@ -65,10 +120,40 @@
 .timer
 {
   height: 10vh; 
-  width: 12vw;
+  width: 7vw;
   font-size: 52px;
   color: rgb(0, 13, 255);
   white-space: nowrap;
 
+  justify-content: space-around;
+  padding: 0px 0px;
+  display: flex;
+
   transform: translate(0%, -1.5vh);
+}
+
+/* test of mr-panels css */
+
+/* Style for top panel */
+#top-panel {
+  max-height: 15%;
+  background: rgb(226, 225, 225);
+  border-color: #000000;
+  border-style: inset;
+  border-width: 20px;
+  border-radius: 35px;
+  /* other styles specific to top panel */
+  transform: translate(30vw, -20vh);
+}
+
+/* Style for bottom panel */
+#bottom-panel {
+  max-height: 20%;
+  background: #fee12b;
+  border-color: #ff0000;
+  border-style: solid;
+  border-width: 10px;
+  border-radius: 15px;
+  /* other styles specific to bottom panel */
+  transform: translate(20vw, 10vh);
 }
